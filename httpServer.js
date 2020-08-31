@@ -4,11 +4,10 @@ const PORT = 8080;
 //function to handle requests and send responses
 const requestHandler = (req, res) => {
   if (req.url === '/') {
-    res.end('Welcome')
-  }
-  else if (req.url === '/urls') {} else {
+    res.end('Welcome');
+  } else if (req.url === '/urls') {} else {
     res.statusCode = 404;
-    res.end('404 Page Not Found')
+    res.end('404 Page Not Found');
   }
 };
 
