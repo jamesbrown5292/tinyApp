@@ -6,6 +6,9 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+//set the express view engine to ejs otherwise its default will be jade
+app.set('view engine', 'ejs');
+
 //handle get requests
 app.get("/", (req, res) => {
   res.send("Hello!");
