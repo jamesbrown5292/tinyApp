@@ -59,15 +59,16 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/:${randUrl}`); //redirects to the new page
 });
 
-//add a route to remove a url resource
-app.post("/urls/:shortURL/delete", (req, res) => {
-  console.log(urlDatabase);
-  console.log(req.params);
-});
-
 //redirect requests to /u/:shortUrl to the respective longUrl
 app.get("/u/:shortURL", (req, res) => {
   res.redirect(`${urlDatabase[req.params.shortURL]}`);
+});
+
+//add a route to remove a url resource
+app.post("/urls/:shortURL/delete", (req, res) => {
+  let shortURL = req.params.shortURL;
+  delete urlDatabase[shortURL];
+  res.redirect("/urls/");
 });
 
 //add a route for creating a new tiny url
