@@ -19,9 +19,20 @@ app.listen(PORT, () => {
 });
 //additional endpooint
 app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
+  res.send(urlDatabase);
 });
 //send some additional html in the response to a different URI
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
+});
+//add a route handler for /urls
+app.get("/urls", (req, res) => {
+  let templateVars = { urls: urlDatabase};
+  res.render('urls_index', templateVars);
+});
+
+//add a route handler for /urls__show
+app.get("/urls/:shortURL", (req, res) => {
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]}; //question - where is it pulling params from? what does the request object look like?
+  res.render("urls_show", templateVars);
 });

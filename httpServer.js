@@ -5,7 +5,9 @@ const PORT = 8080;
 const requestHandler = (req, res) => {
   if (req.url === '/') {
     res.end('Welcome');
-  } else if (req.url === '/urls') {} else {
+  } else if (req.url === '/urls') {
+    res.end('Welcome');
+  } else {
     res.statusCode = 404;
     res.end('404 Page Not Found');
   }
