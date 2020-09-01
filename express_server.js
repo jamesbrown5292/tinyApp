@@ -4,7 +4,8 @@ const PORT = 8080; // default port 8080
 //store urls to access
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "9sm5xK": "http://www.google.com",
+  "eed4f9": "https://www.merriam-webster.com/"
 };
 
 const generateRandomString = () => {
@@ -12,7 +13,7 @@ const generateRandomString = () => {
   //generate a random number between (48 - 90 excluding 58 - 64), get char code from this number
   let retString = "";
   while (retString.length < 6) {
-    let raNum = Math.random() * (90 - 49) + 48;
+    let raNum = Math.ceil(Math.random() * (90 - 49) + 48);
     if (raNum >= 58 && raNum <= 64) {
       continue;
     } else {
@@ -49,10 +50,18 @@ app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase};
   res.render('urls_index', templateVars);
 });
-//handle data being posted from the new page
+
+//handle data being posted from the new page and redirect user to new page
 app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  let randUrl = generateRandomString();
+  urlDatabase[randUrl] = req.body.longURL; //persists the url data
+  res.redirect(`/urls/:${randUrl}`); //redirects to the new page
+});
+
+//redirect requests to /u/:shortUrl to the respective longUrl
+app.get("/u/:shortURL", (req, res) => {
+  res.redirect(`${urlDatabase[req.params.shortURL]}`);
 });
 
 //add a route for creating a new tiny url
