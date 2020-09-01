@@ -24,8 +24,13 @@
           <tr>
             <td><%= url %></td>
             <td><%= urls[url] %></td>
+            <td>
+              <form method="POST" action="/urls/:shortURL/delete">
+                <button type="submit">Delete</button>
+              </form>
+            </td>
           </tr>
-        <% } %>
+          <% } %>
       </tbody>
     </table>
   </main>

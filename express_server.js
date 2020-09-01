@@ -59,6 +59,12 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/:${randUrl}`); //redirects to the new page
 });
 
+//add a route to remove a url resource
+app.post("/urls/:shortURL/delete", (req, res) => {
+  console.log(urlDatabase);
+  console.log(req.params);
+});
+
 //redirect requests to /u/:shortUrl to the respective longUrl
 app.get("/u/:shortURL", (req, res) => {
   res.redirect(`${urlDatabase[req.params.shortURL]}`);
@@ -68,6 +74,7 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
+
 //add a route handler for /urls__show
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]}; //question - where is it pulling params from? what does the request object look like?
