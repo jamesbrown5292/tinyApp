@@ -56,7 +56,7 @@ app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
   let randUrl = generateRandomString();
   urlDatabase[randUrl] = req.body.longURL; //persists the url data
-  res.redirect(`/urls/:${randUrl}`); //redirects to the new page
+  res.redirect(`/urls/${randUrl}`); //redirects to the new page
 });
 
 //redirect requests to /u/:shortUrl to the respective longUrl
@@ -66,9 +66,9 @@ app.get("/u/:shortURL", (req, res) => {
 
 //add a route to remove a url resource
 app.post("/urls/:shortURL/delete", (req, res) => {
-  let shortURL = req.params.shortURL;
+  const { shortURL } = req.params;
   delete urlDatabase[shortURL];
-  res.redirect("/urls/");
+  res.redirect("/urls");
 });
 
 //add a route for creating a new tiny url
@@ -79,5 +79,15 @@ app.get("/urls/new", (req, res) => {
 //add a route handler for /urls__show
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]}; //question - where is it pulling params from? what does the request object look like?
+  //console.log("Logging long URL", longURL);
   res.render("urls_show", templateVars);
 });
+
+//add a handler for updating a long URL
+app.post("/urls/:shortURL", (req, res) => {
+  let updatedLongURL = req.body.updatedLongURL;
+  let shortURL = req.params.shortURL;
+  urlDatabase[shortURL] = updatedLongURL;
+  res.redirect("/urls/");
+});
+
