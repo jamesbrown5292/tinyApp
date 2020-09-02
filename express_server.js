@@ -8,6 +8,8 @@ const urlDatabase = {
   "eed4f9": "https://www.merriam-webster.com/"
 };
 
+const users = {};
+
 const generateRandomString = () => {
   //loop from 1-6
   //generate a random number between (48 - 90 excluding 58 - 64), get char code from this number
@@ -96,7 +98,6 @@ app.post("/urls/:shortURL", (req, res) => {
 app.post("/login", (req, res) => {
   let username = req.body.username;
   res.cookie("username", username);
-  console.log(req.cookies);
   res.redirect("/urls");
 });
 
@@ -108,4 +109,16 @@ app.post("/logout", (req, res) => {
 app.get("/register", (req, res) => {
   let templateVars = {};
   res.render("register", templateVars);
+})
+
+app.post("/register", (req, res) => {
+  let id = generateRandomString()
+  let email = req.body.email;
+  let username = req.body.username;
+  let password = req.body.password;
+  users[id] = {id, username, email, password};
+  res.cookie("username", username);
+  res.cookie("user_id", id);
+  res.redirect("/urls");
+  console.log(users);
 })
