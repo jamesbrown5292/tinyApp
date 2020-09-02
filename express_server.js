@@ -23,8 +23,8 @@ const generateRandomString = () => {
   }
   return retString.toLowerCase();
 };
-var cookieParser = require('cookie-parser')
-app.use(cookieParser())
+let cookieParser = require('cookie-parser');
+app.use(cookieParser());
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 //set the express view engine to ejs otherwise its default will be jade
@@ -74,13 +74,13 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 //add a route for creating a new tiny url
 app.get("/urls/new", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies.username}; 
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies.username};
   res.render("urls_new");
 });
 
 //add a route handler for /urls__show
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies.username}; 
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies.username};
   //console.log("Logging long URL", longURL);
   res.render("urls_show", templateVars);
 });
@@ -94,14 +94,14 @@ app.post("/urls/:shortURL", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  let username = req.body.username
+  let username = req.body.username;
   res.cookie("username", username);
   console.log(req.cookies);
-  res.redirect("/urls")
-})
+  res.redirect("/urls");
+});
 
 app.post("/logout", (req, res) => {
-  res.clearCookie(username);
+  res.clearCookie("username");
   res.redirect("/urls");
-})
+});
 
