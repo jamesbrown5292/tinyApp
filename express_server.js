@@ -51,6 +51,7 @@ app.get("/hello", (req, res) => {
 //add a route handler for /urls
 app.get("/urls", (req, res) => {
   let email = users.email;
+  console.log(req.cookies)
   let templateVars = { urls: urlDatabase, users: users, email: email};
   res.render('urls_index', templateVars);
 });
@@ -77,13 +78,13 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 //add a route for creating a new tiny url
 app.get("/urls/new", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies.username};
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
   res.render("urls_new");
 });
 
 //add a route handler for /urls__show
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies.username};
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
   //console.log("Logging long URL", longURL);
   res.render("urls_show", templateVars);
 });
@@ -104,7 +105,7 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect("/urls");
 });
 
@@ -112,11 +113,30 @@ app.get("/register", (req, res) => {
   res.render("register", users);
 })
 
+const emailLookup = (emailAddress) => {
+  for (let user in users) {
+    let userVals = Object.values(users);
+    console.log(userVals);
+    if (userVals.includes(emailAddress)) {
+      return true;
+    }
+  };
+  return false; 
+}
+
 app.post("/register", (req, res) => {
   let id = generateRandomString()
   let email = req.body.email;
   let password = req.body.password;
-  users = {id, email, password};
+  //res.send error 400 if password empty or email empty
+  //email lookup finds email in userobj
+  if (!email || !password) {
+    return res.status(400).send('Email or password cannot be empty!'); 
+  } else if (emailLookup(email)) {
+    return res.status(400).send('Email address is already in use!'); 
+  } else {
   res.cookie("user_id", id);
   res.redirect("/urls")
+  }
+  users = {id, email, password};
 })
