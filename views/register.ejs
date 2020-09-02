@@ -7,14 +7,22 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <title>TinyApp Registration</title>
 </head>
-<body>
-  <div>
-    <form method="GET" action="/login">
+<header>
+  <nav class="navbar navbar-expand-md navbar-dark bg-success">
+    <a class="navbar-brand" href="/urls">TinyApp</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+      </div>
+    </div>
+    <form method="POST" action="/login">
       <input type="email" name="email" placeholder="email">
       <input type="text" name="name" placeholder="name">
       <input type="password" name="password" placeholder="Password">
       <button type="submit">Submit</button>
     </form>
-  </div>
-</body>
+  </nav>
+</header>
 </html>
