@@ -8,7 +8,7 @@ const urlDatabase = {
   "eed4f9": "https://www.merriam-webster.com/"
 };
 
-const users = {};
+let users = {};
 
 const generateRandomString = () => {
   //loop from 1-6
@@ -50,7 +50,8 @@ app.get("/hello", (req, res) => {
 });
 //add a route handler for /urls
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase, username: req.cookies.username};
+  let email = users.email;
+  let templateVars = { urls: urlDatabase, users: users, email: email};
   res.render('urls_index', templateVars);
 });
 
@@ -98,6 +99,7 @@ app.post("/urls/:shortURL", (req, res) => {
 app.post("/login", (req, res) => {
   let username = req.body.username;
   res.cookie("username", username);
+  //console.log(req.cookies);
   res.redirect("/urls");
 });
 
@@ -107,18 +109,14 @@ app.post("/logout", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  let templateVars = {};
-  res.render("register", templateVars);
+  res.render("register", users);
 })
 
 app.post("/register", (req, res) => {
   let id = generateRandomString()
   let email = req.body.email;
-  let username = req.body.username;
   let password = req.body.password;
-  users[id] = {id, username, email, password};
-  res.cookie("username", username);
+  users = {id, email, password};
   res.cookie("user_id", id);
-  res.redirect("/urls");
-  console.log(users);
+  res.redirect("/urls")
 })

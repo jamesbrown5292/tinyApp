@@ -10,14 +10,14 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    <% if (!username) { %>
+    <% if (!email) { %>
       <form class="form-inline my-2 my-lg-0" method="POST" action="/login">
-        <input class="form-control mr-sm-2" type="text" name="username" placeholder="Username">
+        <input class="form-control mr-sm-2" type="text" name="email" placeholder="Email">
         <button class="btn btn-primary my-2 my-sm-0" type="submit">Log in</button>
       </form> 
     <%  } else { %>
       <form class="form-inline my-2 my-lg-0" method="POST" action="/logout">
-        <label>Logged in as: <%= username %></label>
+        <label>Logged in as: <%= email %></label>
         <button class="btn btn-primary my-2 my-sm-0" type="submit">Log out</button>
       </form> 
     <%  } %>
