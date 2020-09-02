@@ -9,12 +9,17 @@
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
-      <div>
-      </div>
     </div>
-    <form method="POST" action="/login">
-      <button type="submit">Log in</button>
-      <input type="text" type="text" name="username" placeholder="Username" style="width: 100px; margin: 1em">
-    </form>  
+    <% if (!username) { %>
+      <form class="form-inline my-2 my-lg-0" method="POST" action="/login">
+        <input class="form-control mr-sm-2" type="text" name="username" placeholder="Username">
+        <button class="btn btn-primary my-2 my-sm-0" type="submit">Log in</button>
+      </form> 
+    <%  } else { %>
+      <form class="form-inline my-2 my-lg-0" method="POST" action="/logout">
+        <label>Logged in as: <%= username %></label>
+        <button class="btn btn-primary my-2 my-sm-0" type="submit">Log out</button>
+      </form> 
+    <%  } %>
   </nav>
 </header>
