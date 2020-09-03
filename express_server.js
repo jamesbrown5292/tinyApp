@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 const app = express();
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieSession({name: 'Session', keys: ['user_id']}))
+app.use(cookieSession({name: 'Session', keys: ['user_id', 'fav']}))
 const PORT = 8080; // default port 8080
 //store urls to access
 
@@ -53,17 +53,19 @@ app.get("/hello", (req, res) => {
 //add a route handler for /urls
 app.get("/urls", (req, res) => {
   const userIDCookie = req.session.user_id;
+  const filteredUsers = {};
   if (!userIDCookie) {
     res.redirect("/login");
   } else {
     for (let url in urlDatabase) {
       let userID = urlDatabase[url]['userID'];
-      if (userID !== userIDCookie ) {
-        delete urlDatabase[url]
+      if (userID === userIDCookie ) {
+        //can't delete the database or websites not saved between sessions 
+        filteredUsers[url] = url
       }
     }
     //urls needs to be filtered here to only include ones wtith user_id
-    const templateVars = { urls: urlDatabase, user: users[userIDCookie] };
+    const templateVars = { urls: filteredUsers, user: users[userIDCookie], unfilteredURL: urlDatabase };
     res.render('urls_index', templateVars);
   }
 });
@@ -78,6 +80,32 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`); //redirects to the new page
 });
 
+//handle favourite button being pressed
+//save fav cookie at url entry 
+app.post("/:shortURL/fav", (req, res) => {
+  const userIDCookie = req.session.user_id;
+  if (!userIDCookie) {
+    res.redirect("/login");
+  } else {
+    const shortURL = req.params.shortURL
+    req.session.fav = shortURL;
+    urlDatabase[shortURL]['fav'] = true;
+    res.redirect("/urls");
+  }
+});
+
+app.post("/:shortURL/unfav", (req, res) => {
+  const userIDCookie = req.session.user_id;
+  if (!userIDCookie) {
+    res.redirect("/login");
+  } else {
+    const shortURL = req.params.shortURL
+    req.session.fav = shortURL;
+    urlDatabase[shortURL]['fav'] = false;
+    res.redirect("/urls");
+  }
+});
+
 //redirect requests to /u/:shortUrl to the respective longUrl
 app.get("/u/:shortURL", (req, res) => {
   const userID = req.session.user_id;
@@ -85,7 +113,6 @@ app.get("/u/:shortURL", (req, res) => {
   if (urlDatabase[shortURL]) {
     const formattedLongURL = urlDatabase[shortURL]['longURL'].substring(0, 4) !== 'http' ? `http://${urlDatabase[shortURL]['longURL']}` : urlDatabase[shortURL]['longURL'];
     //if there is no user_id cookie - redirect to sign in page
-    console.log(shortURL)
     if (!userID) {
       res.redirect("/login")
     } else if (urlDatabase[shortURL]['userID'] !== userID) {
@@ -155,9 +182,9 @@ app.get("/register", (req, res) => {
   res.render("register", users);
 });
 
-const emailLookup = (emailAddress) => {
-  for (let userId in users) {
-    const user = users[userId];
+const emailLookup = (emailAddress, database) => {
+  for (let userId in database) {
+    const user = database[userId];
     if (user.email === emailAddress) {
       return user;
     }
@@ -174,8 +201,8 @@ app.post("/register", (req, res) => {
   //email lookup finds email in userobj
   if (!email || !password) {
     return res.status(400).send('Email or password cannot be empty!');
-  } else if (emailLookup(email)) {
-    return res.status(400).send('Email address is already in use!');
+  } else if (emailLookup(email, users)) {
+    return res.status(400).send('Sorry, that email/password combination is invalid!');
   } else {
     users[id] = {id, email, hashedPassword};
     req.session.user_id = id;
@@ -193,12 +220,11 @@ app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   //retrieve user in DB with email;
-  const user = emailLookup(email);
+  const user = emailLookup(email, users);
   if (user) {
     let passCompare = bcrypt.compareSync(password, user.hashedPassword);
-    console.log(passCompare);
     if (passCompare) {
-      res.session.user_id = user.id;
+      req.session.user_id = user.id;
       const templateVars = { user };
       res.redirect("/urls");
     } else {
