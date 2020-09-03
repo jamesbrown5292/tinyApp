@@ -2,12 +2,13 @@
 const cookieSession = require('cookie-session');
 const bodyParser = require("body-parser");
 const express = require("express");
-const bcrypt = require('bcrypt');
-
+const bcrypt = require("bcrypt");
+const helpers = require("./helpers")
 const app = express();
+const emailLookup = helpers.emailLookup;
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieSession({name: 'Session', keys: ['user_id', 'fav']}))
+app.use(cookieSession({name: 'Session', keys: ['user_id']}))
 const PORT = 8080; // default port 8080
 //store urls to access
 
@@ -174,15 +175,6 @@ app.get("/register", (req, res) => {
   res.render("register", users);
 });
 
-const emailLookup = (emailAddress, database) => {
-  for (let userId in database) {
-    const user = database[userId];
-    if (user.email === emailAddress) {
-      return user;
-    }
-  }
-  return false;
-};
 
 app.post("/register", (req, res) => {
   let id = generateRandomString();
