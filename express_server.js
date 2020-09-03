@@ -73,7 +73,7 @@ app.post("/urls", (req, res) => {
   const randURL = generateRandomString();
   const shortURL = randURL
   const longURL = req.body.longURL;
-  const userID = req.cookies.user_id
+  const userID = req.session.user_id
   urlDatabase[shortURL] = {longURL, userID }; //persists the url data
   res.redirect(`/urls/${shortURL}`); //redirects to the new page
 });

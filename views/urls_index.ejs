@@ -37,12 +37,12 @@
             <td><%= urls[url]['longURL'] %></td>
             <td>
               <form method="GET" action="/urls/<%= url %>">
-                <button>Edit</button>
+                <button class="btn btn-primary" style="background-color: #58a2ed" >Edit</button>
               </form>
             </td>
             <td>
               <form method="POST" action="/urls/<%= url %>/delete">
-              <button type="submit">Delete</button>
+              <button type="submit" class="btn btn-danger" style="border-color: white;" >Delete</button>
               </form>
             </td>
           </tr>
