@@ -15,19 +15,19 @@
         <div>
           <form action="/logout" method="POST"> 
             <label> Logged in as <%= user.email %></label>
-            <button type="submit" name="logout" class="btn-link">Sign out</button>
+            <button type="submit" class="btn btn-warning" name="logout" class="btn-link">Sign out</button>
           </form>  
         </div>
       </div>
     <% } else { %>
       <div>
        <form action="register" method="GET">
-         <button type="submit" name="register" class="btn-link">Register!</button>
+         <button type="submit" class="btn btn-primary" style="background-color: #2b7420; border-color: #35f804; margin: 5px;" name="register" class="btn-link">Register!</button>
        </form>
      </div>
      <div>
        <form action="login" method="GET">
-         <button type="submit" name="login" class="btn-link">Log in!</button>
+         <button type="submit" class="btn btn-primary" style="background-color: #58a2ed"  name="login" class="btn-link">Log in!</button>
        </form>
      </div> 
     <% } %>
