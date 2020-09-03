@@ -10,9 +10,6 @@ const PORT = 8080; // default port 8080
 //store urls to access
 
 const urlDatabase = {
-  "b2xVn2": {longURL: "http://www.lighthouselabs.ca", userID: "demo"},
-  "9sm5xK": {longURL: "http://www.google.com", userID: "demo"},
-  "eed4f9": {longURL: "https://www.merriam-webster.com/", userID: "demo"}
 };
 
 const users = {};
@@ -67,6 +64,7 @@ app.get("/urls", (req, res) => {
     }
     //urls needs to be filtered here to only include ones wtith user_id
     const templateVars = { urls: urlDatabase, user: users[userIDCookie] };
+    console.log(templateVars['user'])
     res.render('urls_index', templateVars);
   }
 });
@@ -143,8 +141,8 @@ app.get("/urls/:shortURL", (req, res) => {
 
 //add a handler for updating a long URL
 app.post("/urls/:shortURL", (req, res) => {
-  let updatedLongURL = req.body.updatedLongURL;
-  let shortURL = req.params.shortURL;
+  const updatedLongURL = req.body.updatedLongURL;
+  const shortURL = req.params.shortURL;
   urlDatabase[shortURL]['longURL'] = updatedLongURL;
   res.redirect("/urls");
 });
