@@ -108,21 +108,13 @@ app.post("/:shortURL/unfav", (req, res) => {
 
 //redirect requests to /u/:shortUrl to the respective longUrl
 app.get("/u/:shortURL", (req, res) => {
-  const userID = req.session.user_id;
   const shortURL = req.params.shortURL;
+  //if we have this entry in the database
   if (urlDatabase[shortURL]) {
     const formattedLongURL = urlDatabase[shortURL]['longURL'].substring(0, 4) !== 'http' ? `http://${urlDatabase[shortURL]['longURL']}` : urlDatabase[shortURL]['longURL'];
-    //if there is no user_id cookie - redirect to sign in page
-    if (!userID) {
-      res.redirect("/login")
-    } else if (urlDatabase[shortURL]['userID'] !== userID) {
-      //if the short url does not appear with this user ID in the DB, send an error message 
-      res.status(400).send('We do not recognize that TinyUrl from your saved TinyUrls')
-    } else {
-      res.redirect(formattedLongURL);
-    }
+    res.redirect(formattedLongURL);
   } else {
-    res.status(400).send('We do not recognize that TinyUrl from your saved TinyUrls')
+    res.status(400).send('We do not recognize that TinyUrl')
   }
 });
 
