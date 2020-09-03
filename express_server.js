@@ -55,9 +55,20 @@ app.get("/hello", (req, res) => {
 
 //add a route handler for /urls
 app.get("/urls", (req, res) => {
-  const user_id = req.cookies.user_id;
-  const templateVars = { urls: urlDatabase, user: users[user_id] };
-  res.render('urls_index', templateVars);
+  const userIDCookie = req.cookies.user_id;
+  if (!userIDCookie) {
+    res.redirect("/login");
+  } else {
+    for (let url in urlDatabase) {
+      let userID = urlDatabase[url]['userID'];
+      if (userID !== userIDCookie ) {
+        delete urlDatabase[url]
+      }
+    }
+    //urls needs to be filtered here to only include ones wtith user_id
+    const templateVars = { urls: urlDatabase, user: users[userIDCookie] };
+    res.render('urls_index', templateVars);
+  }
 });
 
 //handle new short URL being posted from the new page and redirect user to new page
@@ -72,18 +83,29 @@ app.post("/urls", (req, res) => {
 
 //redirect requests to /u/:shortUrl to the respective longUrl
 app.get("/u/:shortURL", (req, res) => {
+  const userID = req.cookies.user_id;
   const shortURL = req.params.shortURL;
-  const formattedLongURL = urlDatabase[shortURL].longURL.substring(0, 4) !== 'http' ? `http://${urlDatabase[shortURL].longURL}` : urlDatabase[shortURL].longURL;
-  res.redirect(formattedLongURL);
-  console.log(shortURL);
-  console.log(" URL object", urlDatabase[shortURL])  
-  console.log("longURL ", longURL)
+  if (urlDatabase[shortURL]) {
+    const formattedLongURL = urlDatabase[shortURL]['longURL'].substring(0, 4) !== 'http' ? `http://${urlDatabase[shortURL]['longURL']}` : urlDatabase[shortURL]['longURL'];
+    //if there is no user_id cookie - redirect to sign in page
+    console.log(shortURL)
+    if (!userID) {
+      res.redirect("/login")
+    } else if (urlDatabase[shortURL]['userID'] !== userID) {
+      //if the short url does not appear with this user ID in the DB, send an error message 
+      res.status(400).send('We do not recognize that TinyUrl from your saved TinyUrls')
+    } else {
+      res.redirect(formattedLongURL);
+    }
+  } else {
+    res.status(400).send('We do not recognize that TinyUrl from your saved TinyUrls')
+  }
 });
 
 //add a route to remove a url resource
 app.post("/urls/:shortURL/delete", (req, res) => {
-  const user_id = req.cookies.user_id;
-  if (!user_id) {
+  const userID = req.cookies.user_id;
+  if (!userID) {
     res.redirect("/login");
   } else {
   const { shortURL } = req.params;
