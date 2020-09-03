@@ -9,17 +9,19 @@
 </head>
 <body>
   <%- include('partials/_header') %>
-  <form method="POST" action="/login">
+  <form method="POST"  action="/login" class="form-group">
     <div>
-      <h1>Log in to view your TinyUrls</h1>
-      <label>Enter your email:</label>
-      <input type="email" name="email" placeholder="email">
+      <h1 class="text-center" style="margin: 20px;">Log in to view your TinyUrls</h1>
     </div>
     <div>
-      <label>Enter your password</label>
-      <input type="password" name="password" placeholder="Password">
+      <label style="margin-left: 40%" >Enter your email:</label>
+      <input type="email" style="width: 250px; margin-left: 40%" class="form-control" name="email" placeholder="email">
     </div>
-    <button type="submit">Submit</button>
+    <div>
+      <label style="margin-left: 40%">Enter your password</label>
+      <input style="width: 250px; margin-left: 40%" type="password"  class="form-control" name="password" placeholder="Password">
+    </div>
+    <button style="margin-left: 40%; margin-top: 5px" type="submit" class="btn btn-secondary">Submit</button>
   </form>
 </body>
 </html>

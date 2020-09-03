@@ -13,11 +13,11 @@
   <main style="margin: 1em;">
     <%if (!Object.keys(urls).length && !user) { %>
       <div>
-        <h1>Log in or register to see your TinyUrls</h1>
+        <h1 class="text-center">Log in or register to see your TinyUrls</h1>
       </div>
     <% } else if (!Object.keys(urls).length && user) { %>
       <div>
-        <h1>Add some TinyUrls to your collection!</h1>
+        <h1 class="text-center">Add some TinyUrls to your collection!</h1>
       </div>
     <% } else { %>
       <h3>My URLs</h3>

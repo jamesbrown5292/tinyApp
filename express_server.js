@@ -64,7 +64,6 @@ app.get("/urls", (req, res) => {
     }
     //urls needs to be filtered here to only include ones wtith user_id
     const templateVars = { urls: urlDatabase, user: users[userIDCookie] };
-    console.log(templateVars['user'])
     res.render('urls_index', templateVars);
   }
 });
