@@ -12,7 +12,9 @@
       <div class="card-header"></div>
       <div class="card-body">
         <h5 class="card-title">TinyURL for: <a href="/u/<%= longURL %>"></a><%= longURL %></h5>
-        <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
+        <p class="card-text">TinyURL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
+        <p class="card-text">TinyURL vists: <%= visitCount %></a></p>
+        <p class="card-text">Unique TinyURL vists: <%= uniqueVisits.length %></a></p>
         <div style="margin-left: 30%">
           <form class="form-inline" action="/urls/<%= shortURL %>" method="POST">
             <label>Update the URL</label>
@@ -22,6 +24,14 @@
         </div>
       </div>
     <div class="card-footer text-muted"></div>
+  </div>
+  <div class="card text-center">
+    <h5 class="card-title">Visitors to your TinyURL</h5>
+      <%for (let i = 0; i < uniqueVisits.length; i++) { %>
+        <div>
+          <tr style="background-color: #ffeb7a"> <%= uniqueVisits[i] %> at <%= visitTimes %> </tr>
+        </div>
+      <%  } %>
   </div>
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

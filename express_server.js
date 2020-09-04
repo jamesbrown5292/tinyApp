@@ -2,13 +2,16 @@
 const cookieSession = require('cookie-session');
 const bodyParser = require("body-parser");
 const express = require("express");
+const methodOverride = require('method-override')
 const bcrypt = require("bcrypt");
 const helpers = require("./helpers")
 const app = express();
 const emailLookup = helpers.emailLookup;
+app.use(methodOverride('_method'));
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieSession({name: 'Session', keys: ['user_id']}))
+app.use(cookieSession({name: 'Session', keys: ['user_id']}));
+
 const PORT = 8080; // default port 8080
 //store urls to access
 
@@ -31,6 +34,13 @@ const generateRandomString = () => {
   return retString.toLowerCase();
 };
 //set the express view engine to ejs otherwise its default will be jade
+app.use((req, res, next) => {
+  //create a visitor id cookie if the request doesnt aready habe one
+  if (!req.session.user_id) {
+    req.session.user_id = generateRandomString();
+  }
+  next();
+});
 
 //handle get requests
 app.get("/", (req, res) => {
@@ -55,7 +65,7 @@ app.get("/hello", (req, res) => {
 app.get("/urls", (req, res) => {
   const userIDCookie = req.session.user_id;
   const filteredUsers = {};
-  if (!userIDCookie) {
+  if (!users[userIDCookie]) {
     res.redirect("/login");
   } else {
     for (let url in urlDatabase) {
@@ -77,15 +87,21 @@ app.post("/urls", (req, res) => {
   const shortURL = randURL
   const longURL = req.body.longURL;
   const userID = req.session.user_id
-  urlDatabase[shortURL] = {longURL, userID }; //persists the url data
+  urlDatabase[shortURL] = {longURL, 
+    userID, 
+    fav: false, 
+    visitCount: 0, 
+    uniqueVisits: [], 
+    visitTimes: [] 
+  };    //persists the url data
   res.redirect(`/urls/${shortURL}`); //redirects to the new page
 });
 
 //handle favourite button being pressed
 //save fav cookie at url entry 
-app.post("/:shortURL/fav", (req, res) => {
+app.put("/:shortURL/fav", (req, res) => {
   const userIDCookie = req.session.user_id;
-  if (!userIDCookie) {
+  if (!users[userIDCookie]) {
     res.redirect("/login");
   } else {
     const shortURL = req.params.shortURL
@@ -95,9 +111,9 @@ app.post("/:shortURL/fav", (req, res) => {
   }
 });
 
-app.post("/:shortURL/unfav", (req, res) => {
+app.put("/:shortURL/unfav", (req, res) => {
   const userIDCookie = req.session.user_id;
-  if (!userIDCookie) {
+  if (userIDCookie !== users[userIDCookie].id) {
     res.redirect("/login");
   } else {
     const shortURL = req.params.shortURL
@@ -110,19 +126,30 @@ app.post("/:shortURL/unfav", (req, res) => {
 //redirect requests to /u/:shortUrl to the respective longUrl
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
+  const userIDCookie = req.session.user_id
+  //count++ time this request is made
+  urlDatabase[shortURL]['visitCount'] ++;
+  //if it's a unique visit, log it
+  if (!urlDatabase[shortURL]['uniqueVisits'].includes(userIDCookie)) {
+    urlDatabase[shortURL]['uniqueVisits'].push(userIDCookie);
+    const visitDate = new Date();
+    var visitTime = visitDate.getHours() + ":" + visitDate.getMinutes() + " UTC on " + visitDate.getDate() + "/" + visitDate.getMonth() + "/" + visitDate.getFullYear()
+    urlDatabase[shortURL]['visitTimes'].push(visitTime);
+    console.log(urlDatabase[shortURL])
+  };
   //if we have this entry in the database
   if (urlDatabase[shortURL]) {
     const formattedLongURL = urlDatabase[shortURL]['longURL'].substring(0, 4) !== 'http' ? `http://${urlDatabase[shortURL]['longURL']}` : urlDatabase[shortURL]['longURL'];
     res.redirect(formattedLongURL);
   } else {
-    res.status(400).send('We do not recognize that TinyUrl')
+    res.status(400).send('We do not recognize that TinyURL')
   }
 });
 
 //add a route to remove a url resource
-app.post("/urls/:shortURL/delete", (req, res) => {
-  const userID = req.session.user_id;
-  if (!userID) {
+app.delete("/urls/:shortURL", (req, res) => {
+  const userIDCookie = req.session.user_id;
+  if (!users[userIDCookie]) {
     res.redirect("/login");
   } else {
   const { shortURL } = req.params;
@@ -134,7 +161,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 //add a route for creating a new tiny url
 app.get("/urls/new", (req, res) => {
   const userID = req.session.user_id;
-  if (!userID) {
+  if (!users[userID]) {
     res.redirect("/login");
   } else {
     let templateVars = { user: users[userID]};
@@ -144,15 +171,18 @@ app.get("/urls/new", (req, res) => {
 
 //add a route handler for /urls__show
 app.get("/urls/:shortURL", (req, res) => {
-  const userID = req.session.user_id;
-  if (!userID) {
+  const userID = req.session.user_id; //time.now()
+  if (!users[userID]) {
     res.redirect("/login");
   } else {
     const shortURL = req.params.shortURL;
     const templateVars = { 
       shortURL, 
       longURL: urlDatabase[shortURL].longURL,
-      user: users[userID]
+      user: users[userID],
+      visitCount: urlDatabase[shortURL].visitCount,
+      uniqueVisits: urlDatabase[shortURL].uniqueVisits, 
+      visitTimes: urlDatabase[shortURL].visitTimes
     };
     res.render("urls_show", templateVars);
   }
@@ -175,8 +205,8 @@ app.get("/register", (req, res) => {
   res.render("register", users);
 });
 
-
-app.post("/register", (req, res) => {
+//put is wrong here
+app.put("/register", (req, res) => {
   let id = generateRandomString();
   let email = req.body.email;
   const password = req.body.password;
@@ -204,11 +234,12 @@ app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   //retrieve user in DB with email;
-  const user = emailLookup(email, users);
-  if (user) {
+  const userID = emailLookup(email, users);
+  if (userID) {
+    const user = users[userID]
     let passCompare = bcrypt.compareSync(password, user.hashedPassword);
     if (passCompare) {
-      req.session.user_id = user.id;
+      req.session.user_id = users[userID].id;
       const templateVars = { user };
       res.redirect("/urls");
     } else {

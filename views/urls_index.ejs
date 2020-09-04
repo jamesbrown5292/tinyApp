@@ -48,7 +48,7 @@
                 </form>
               </td>
               <td>
-                <form method="POST" action="/<%= url %>/unfav">
+                <form method="POST" action="/<%= url %>/unfav?_method=PUT">
                 <button type="submit" class="btn btn-warning" style="background-color: silver; border-color: gray;" >Un-favourite</button>
                 </form>
               </td>
@@ -63,12 +63,12 @@
                 </form>
               </td>
               <td>
-                <form method="POST" action="/urls/<%= url %>/delete">
+                <form method="POST" action="/urls/<%= url %>/?_method=DELETE">
                 <button type="submit" class="btn btn-danger" style="border-color: white;" >Delete</button>
                 </form>
               </td>
               <td>
-                <form method="POST" action="/<%= url %>/fav">
+                <form method="POST" action="/<%= url %>/fav?_method=PUT">
                 <button type="submit" class="btn btn-warning" style="background-color: gold;" >Favourite</button>
                 </form>
               </td>

@@ -1,11 +1,11 @@
 const emailLookup = (emailAddress, database) => {
-  for (let userId in database) {
-    const user = database[userId];
-    if (user.email === emailAddress) {
-      return user;
+  for (let user in database) {
+    const userID = database[user]['id'];
+    if (database[user]['email'] === emailAddress) {
+      return userID;
     }
   }
-  return false;
+  return undefined;
 };
 
 module.exports = { emailLookup };
