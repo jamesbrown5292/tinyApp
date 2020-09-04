@@ -17,7 +17,7 @@
         <p class="card-text">Unique TinyURL vists: <%= uniqueVisits.length %></a></p>
         <p class="card-text"> TinyURL created on: <%= dateCreated %></a></p>
         <div style="margin-left: 30%">
-          <form class="form-inline" action="/urls/<%= shortURL %>" method="POST">
+          <form class="form-inline" action="/urls/<%= shortURL %>/?_method=PUT" method="POST">
             <label>Update the URL</label>
             <input type="text" class="form-control" type="text" name="updatedLongURL" placeholder="http://" style="width: 300px; margin: 1em">
             <button type="submit" class="btn btn-primary">Update</button>

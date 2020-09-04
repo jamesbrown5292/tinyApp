@@ -214,7 +214,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 
 //Route handler for updating the long URL associated with a specific short URL
-app.post("/urls/:shortURL", (req, res) => {
+app.put("/urls/:shortURL", (req, res) => {
   const updatedLongURL = req.body.updatedLongURL;
   const shortURL = req.params.shortURL;
   urlDatabase[shortURL]['longURL'] = updatedLongURL;
