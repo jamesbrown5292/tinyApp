@@ -10,5 +10,26 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
+    <% if (user) { %>
+      <div>
+        <div>
+          <form action="/logout" method="POST"> 
+            <label style="color: white"> Logged in as <%= user.email %></label>
+            <button type="submit" class="btn btn-danger btn-sm" style="border-color: rgb(146, 7, 7);" name="logout">Sign out</button>
+          </form>  
+        </div>
+      </div>
+    <% } else { %>
+      <div>
+       <form action="register" method="GET">
+         <button type="submit" class="btn btn-primary" style="background-color: #2b7420; border-color: #35f804; margin: 5px;" name="register" class="btn-link">Register!</button>
+       </form>
+     </div>
+     <div>
+       <form action="login" method="GET">
+         <button type="submit" class="btn btn-primary" style="background-color: #58a2ed"  name="login" >Log in!</button>
+       </form>
+     </div> 
+    <% } %>
   </nav>
 </header>

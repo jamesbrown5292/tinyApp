@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <title>TinyApp Registration</title>
+</head>
+<header>
+  <nav class="navbar navbar-expand-md navbar-dark bg-success">
+    <a class="navbar-brand" href="/urls">TinyApp</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+      </div>
+    </div>
+    <div>
+      <form action="login" method="GET">
+        <button type="submit" class="btn btn-primary" style="background-color: #58a2ed"  name="login" class="btn-link">Log in!</button>
+      </form>
+    </div> 
+  </nav>
+</header>
+<body>
+  <div>
+    <h1 class="text-center" style="margin: 20px;">Sign up for an account to see your TinyUrls</h1>
+  </div>
+  <form method="POST" action="/register" class="form-group">
+    <div>
+      <label style="margin-left: 40%">Enter your email:</label>
+      <input style="width: 250px; margin-left: 40%" class="form-control" type="email" name="email" placeholder="email">
+    </div>
+    <div>
+      <label style="margin-left: 40%">Choose a password:</label>
+      <input type="password" style="width: 250px; margin-left: 40%" class="form-control" name="password" placeholder="Password">
+    </div>
+    <button type="submit" style="margin-left: 40%; margin-top: 5px" type="submit" class="btn btn-secondary">Submit</button>
+  </form>
+</body>
+</html>
