@@ -131,6 +131,14 @@ app.put("/:shortURL/unfav", (req, res) => {
   }
 });
 
+//Unique page to send users who are logged in but try to access the views page of a url they don't own 
+app.get("/urls/noshow", (req, res) => {
+  const currentUserID = req.session.user_id;
+  const templateVars = {  user: users[currentUserID]  };
+
+  res.render("urls_noshow", templateVars);
+});
+
 //Redirect requests fromvalid short URL to the respective longUrl, increment the url's counter and edit its visitor data arrays for rendering 
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
@@ -203,10 +211,7 @@ app.get("/urls/:shortURL", (req, res) => {
   }
 });
 
-//Unique page to send users who are logged in but try to access the views page of a url they don't own
-app.get("/urls/noshow", (req, res) => {
-  res.render("urls_noshow", users);
-});
+
 
 //Route handler for updating the long URL associated with a specific short URL
 app.post("/urls/:shortURL", (req, res) => {
